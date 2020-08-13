@@ -10,8 +10,9 @@ import User from "./components/users/User";
 
 class App extends React.Component {
   state = {
-    user: {},
     users: [],
+    user: {},
+    repos: [],
     loading: false,
   };
 
@@ -23,8 +24,7 @@ class App extends React.Component {
     const res = await axios.get(url).catch((err) => console.log(err.message));
 
     if (res.status === 200) {
-      this.setState({ users: res.data.items });
-      this.setState({ loading: false });
+      this.setState({ users: res.data.items, loading: false });
     }
   };
 
@@ -33,18 +33,31 @@ class App extends React.Component {
 
     const url = `https://api.github.com/users/${username}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`;
 
-    const res = await axios.get(url).catch((err) => console.log(err.message));
+    const reposUrl = `https://api.github.com/users/${username}/repos?per_page=10&sort=updated&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`;
 
-    if (res.status === 200) {
-      this.setState({ user: res.data });
-      this.setState({ loading: false });
+    const userPromise = axios.get(url).catch((err) => console.log(err.message));
+    const reposPromise = axios
+      .get(reposUrl)
+      .catch((err) => console.log(err.message));
+
+    const [userResponse, reposResponse] = await Promise.all([
+      userPromise,
+      reposPromise,
+    ]);
+
+    if (userResponse.status === 200 && reposResponse.status === 200) {
+      this.setState({
+        user: userResponse.data,
+        repos: reposResponse.data,
+        loading: false,
+      });
     }
   };
 
   handleClearUser = () => this.setState({ users: [], loading: false });
 
   render() {
-    const { users, user, loading } = this.state;
+    const { users, user, repos, loading } = this.state;
 
     return (
       <Router>
@@ -74,7 +87,7 @@ class App extends React.Component {
                 render={(props) => (
                   <User
                     {...props}
-                    data={user}
+                    data={{ user, repos }}
                     loading={loading}
                     onFetch={this.handleGetUser}
                   />

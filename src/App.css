@@ -178,6 +178,14 @@ img {
 }
 
 /* Grid */
+.flex {
+  display: flex;
+}
+.flex-end {
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

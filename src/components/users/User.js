@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Spinner from "../layouts/Spinner";
+import Repos from "../repos/Repos";
 
 class User extends Component {
   componentDidMount() {
@@ -9,7 +10,7 @@ class User extends Component {
   }
 
   static propTypes = {
-    user: PropTypes.object,
+    data: PropTypes.object.isRequired,
     loading: PropTypes.bool.isRequired,
     onFetch: PropTypes.func.isRequired,
   };
@@ -29,7 +30,10 @@ class User extends Component {
       followers,
       following,
       hireable,
-    } = this.props.data;
+    } = this.props.data.user;
+
+    const { repos } = this.props.data;
+
     const { loading } = this.props;
 
     if (loading) {
@@ -92,6 +96,7 @@ class User extends Component {
             Public Gists: {public_gists}
           </div>
         </div>
+        <Repos repos={repos} />
       </>
     );
   }

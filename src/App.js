@@ -1,9 +1,11 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/layouts/Navbar";
 import Users from "./components/users/Users";
 import axios from "axios";
 import Search from "./components/users/Search";
+import About from "./components/pages/About";
 
 class App extends React.Component {
   state = {
@@ -32,17 +34,31 @@ class App extends React.Component {
     const { users, loading } = this.state;
 
     return (
-      <div className='App'>
-        <Navbar />
-        <div className='container'>
-          <Search
-            showClear={!!users.length}
-            onSearch={this.handleSearchUser}
-            onClear={this.handleClearUser}
-          />
-          <Users loading={loading} users={users} />
+      <Router>
+        <div className='App'>
+          <Navbar />
+          <div className='container'>
+            <Switch>
+              <Route
+                exact
+                path='/'
+                render={(props) => (
+                  <>
+                    <Search
+                      showClear={!!users.length}
+                      onSearch={this.handleSearchUser}
+                      onClear={this.handleClearUser}
+                    />
+                    <Users loading={loading} users={users} />
+                  </>
+                )}
+              />
+
+              <Route path='/about' component={About} />
+            </Switch>
+          </div>
         </div>
-      </div>
+      </Router>
     );
   }
 }

@@ -6,16 +6,16 @@ import Users from "./components/users/Users";
 import axios from "axios";
 import Search from "./components/users/Search";
 import About from "./components/pages/About";
+import User from "./components/users/User";
 
 class App extends React.Component {
   state = {
+    user: {},
     users: [],
     loading: false,
   };
 
   handleSearchUser = async (username) => {
-    if (!username) return;
-
     this.setState({ loading: true });
 
     const url = `https://api.github.com/search/users?q=${username}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`;
@@ -28,10 +28,23 @@ class App extends React.Component {
     }
   };
 
+  handleGetUser = async (username) => {
+    this.setState({ loading: true });
+
+    const url = `https://api.github.com/users/${username}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`;
+
+    const res = await axios.get(url).catch((err) => console.log(err.message));
+
+    if (res.status === 200) {
+      this.setState({ user: res.data });
+      this.setState({ loading: false });
+    }
+  };
+
   handleClearUser = () => this.setState({ users: [], loading: false });
 
   render() {
-    const { users, loading } = this.state;
+    const { users, user, loading } = this.state;
 
     return (
       <Router>
@@ -55,6 +68,18 @@ class App extends React.Component {
               />
 
               <Route path='/about' component={About} />
+
+              <Route
+                path='/user/:username'
+                render={(props) => (
+                  <User
+                    {...props}
+                    data={user}
+                    loading={loading}
+                    onFetch={this.handleGetUser}
+                  />
+                )}
+              />
             </Switch>
           </div>
         </div>

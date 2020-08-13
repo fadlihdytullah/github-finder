@@ -28,6 +28,7 @@ class Search extends Component {
     event.preventDefault();
     if (!this.state.searchTerm) {
       this.setState({ showAlert: true });
+      return;
     }
 
     this.props.onSearch(this.state.searchTerm);

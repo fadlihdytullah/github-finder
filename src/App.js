@@ -6,6 +6,7 @@ import About from "./components/pages/About";
 import User from "./components/users/User";
 import GithubState from "./contexts/github/GithubState";
 import Home from "./components/pages/Home";
+import NotFound from "./components/pages/NotFound";
 
 const App = () => {
   return (
@@ -20,6 +21,8 @@ const App = () => {
               <Route path='/about' component={About} />
 
               <Route path='/user/:username' component={User} />
+
+              <Route component={NotFound} />
             </Switch>
           </div>
         </div>

@@ -4,6 +4,17 @@ import GithubContext from "./githubContext";
 import githubReducer from "./githubReducer";
 import { SET_LOADING, SEARCH_USER, GET_USER, CLEAR_SEARCH } from "./../types";
 
+let githubClientId;
+let githubClientSecret;
+
+if (process.env.NODE_ENV !== "production") {
+  githubClientId = process.env.REACT_APP_GITHUB_CLIENT_ID;
+  githubClientSecret = process.env.REACT_APP_GITHUB_CLIENT_SECRET;
+} else {
+  githubClientId = process.env.GITHUB_CLIENT_ID;
+  githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
+}
+
 const initialState = {
   users: [],
   user: {},
@@ -17,7 +28,7 @@ const GithubState = ({ children }) => {
   const handleSearchUser = async (username) => {
     setLoading();
 
-    const url = `https://api.github.com/search/users?q=${username}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`;
+    const url = `https://api.github.com/search/users?q=${username}&client_id=${githubClientId}&client_secret=${githubClientSecret}`;
 
     const res = await Axios.get(url).catch((err) => {
       setLoading(false);

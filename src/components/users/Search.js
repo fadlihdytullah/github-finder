@@ -1,10 +1,14 @@
 import React from "react";
-import PropTypes from "prop-types";
 import Alert from "../layouts/Alert";
+import { githubContext } from "../contexts/GithubContextProvider";
 
-const Search = ({ showClear, onSearch, onClear }) => {
+const Search = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [showAlert, setShowAlert] = React.useState(false);
+
+  const { users, onSearchUser, onClearSearch } = React.useContext(
+    githubContext,
+  );
 
   React.useEffect(() => {
     if (showAlert) {
@@ -23,14 +27,16 @@ const Search = ({ showClear, onSearch, onClear }) => {
       return;
     }
 
-    onSearch(searchTerm);
+    onSearchUser(searchTerm);
   };
 
   const handleClear = () => {
     setSearchTerm("");
     setShowAlert(false);
-    onClear();
+    onClearSearch();
   };
+
+  const showClear = !!users.length;
 
   return (
     <div>
@@ -64,12 +70,6 @@ const Search = ({ showClear, onSearch, onClear }) => {
       </form>
     </div>
   );
-};
-
-Search.propTypes = {
-  showClear: PropTypes.bool.isRequired,
-  onSearch: PropTypes.func.isRequired,
-  onClear: PropTypes.func.isRequired,
 };
 
 export default Search;

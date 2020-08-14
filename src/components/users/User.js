@@ -1,13 +1,15 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React from "react";
 import { Link } from "react-router-dom";
 import Spinner from "../layouts/Spinner";
 import Repos from "../repos/Repos";
+import { githubContext } from "../contexts/GithubContextProvider";
 
-const User = ({ data: { user, repos }, loading, onFetch, match }) => {
+const User = ({ match }) => {
+  const { user, repos, loading, onFetchUser } = React.useContext(githubContext);
+
   React.useEffect(
     () => {
-      onFetch(match.params.username);
+      onFetchUser(match.params.username);
     },
     // eslint-disable-next-line
     [],
@@ -90,12 +92,6 @@ const User = ({ data: { user, repos }, loading, onFetch, match }) => {
       {repos.length && <Repos repos={repos} />}
     </>
   );
-};
-
-User.propTypes = {
-  data: PropTypes.object.isRequired,
-  loading: PropTypes.bool.isRequired,
-  onFetch: PropTypes.func.isRequired,
 };
 
 export default User;

@@ -87,7 +87,7 @@ const User = ({ data: { user, repos }, loading, onFetch, match }) => {
         <div className='badge badge-light'>Public Repos: {public_repos}</div>
         <div className='badge badge-success'>Public Gists: {public_gists}</div>
       </div>
-      <Repos repos={repos} />
+      {repos.length && <Repos repos={repos} />}
     </>
   );
 };

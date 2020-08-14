@@ -1,10 +1,9 @@
 import React from "react";
 import UserItem from "./UserItem";
 import Spinner from "../layouts/Spinner";
-import { githubContext } from "../contexts/GithubContextProvider";
-
+import GithubContext from "./../../contexts/github/githubContext";
 const Users = () => {
-  const { loading, users } = React.useContext(githubContext);
+  const { loading, users } = React.useContext(GithubContext);
 
   return (
     <>
@@ -12,9 +11,9 @@ const Users = () => {
         <Spinner />
       ) : (
         <div style={userStyle}>
-          {users.map((user) => {
-            return <UserItem key={user.id} user={user} />;
-          })}
+          {users.map((user) => (
+            <UserItem key={user.id} user={user} />
+          ))}
         </div>
       )}
     </>

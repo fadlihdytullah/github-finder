@@ -1,16 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import Axios from "axios";
+import GithubContext from "./githubContext";
+import githubReducer from "./githubReducer";
+import { SET_LOADING, SEARCH_USER, GET_USER, CLEAR_SEARCH } from "./../types";
 
-export const githubContext = React.createContext({});
+const initialState = {
+  users: [],
+  user: {},
+  repos: [],
+  loading: false,
+};
 
-const GithubContextProvider = ({ children }) => {
-  const [users, setUsers] = useState([]);
-  const [user, setUser] = useState({});
-  const [repos, setRepos] = useState([]);
-  const [loading, setLoading] = useState(false);
+const GithubState = ({ children }) => {
+  const [state, dispatch] = React.useReducer(githubReducer, initialState);
 
   const handleSearchUser = async (username) => {
-    setLoading(true);
+    setLoading();
 
     const url = `https://api.github.com/search/users?q=${username}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`;
 
@@ -20,13 +25,12 @@ const GithubContextProvider = ({ children }) => {
     });
 
     if (res && res.status === 200) {
-      setUsers(res.data.items);
-      setLoading(false);
+      dispatch({ type: SEARCH_USER, payload: res.data.items });
     }
   };
 
   const handleGetUser = async (username) => {
-    setLoading(true);
+    setLoading();
 
     const url = `https://api.github.com/users/${username}?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`;
 
@@ -48,32 +52,36 @@ const GithubContextProvider = ({ children }) => {
       reposResponse &&
       reposResponse.status === 200
     ) {
-      setUser(userResponse.data);
-      setRepos(reposResponse.data);
-      setLoading(false);
+      const user = userResponse.data;
+      const repos = reposResponse.data;
+
+      dispatch({ type: GET_USER, payload: { user, repos } });
     }
   };
 
   const handleClearUser = () => {
-    setUsers([]);
-    setLoading(false);
+    dispatch({ type: CLEAR_SEARCH });
+  };
+
+  const setLoading = () => {
+    dispatch({ type: SET_LOADING });
   };
 
   return (
-    <githubContext.Provider
+    <GithubContext.Provider
       value={{
-        users,
-        user,
-        repos,
-        loading,
-        onClearSearch: handleClearUser,
+        users: state.users,
+        user: state.user,
+        repos: state.repos,
+        loading: state.loading,
         onSearchUser: handleSearchUser,
+        onClearSearch: handleClearUser,
         onFetchUser: handleGetUser,
       }}
     >
       {children}
-    </githubContext.Provider>
+    </GithubContext.Provider>
   );
 };
 
-export default GithubContextProvider;
+export default GithubState;

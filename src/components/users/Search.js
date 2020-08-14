@@ -1,13 +1,12 @@
 import React from "react";
 import Alert from "../layouts/Alert";
-import { githubContext } from "../contexts/GithubContextProvider";
-
+import GithubContext from "./../../contexts/github/githubContext";
 const Search = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [showAlert, setShowAlert] = React.useState(false);
 
   const { users, onSearchUser, onClearSearch } = React.useContext(
-    githubContext,
+    GithubContext,
   );
 
   React.useEffect(() => {
